@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <rect x="0" y="0" width="200" height="200" rx="3" ry="3" fill="#edc22e" />
+  <!-- champion face -->
+  <circle cx="70" cy="80" r="10" fill="#fff" />
+  <circle cx="130" cy="80" r="10" fill="#fff" />
+  <path d="M60 125 Q100 150 140 125" stroke="#fff" stroke-width="6" fill="none" />
+  <text x="100" y="165" font-size="24" font-family="sans-serif" fill="#fff" text-anchor="middle">2048</text>
+</svg>

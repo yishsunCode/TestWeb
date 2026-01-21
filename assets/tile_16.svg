@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <rect x="0" y="0" width="200" height="200" rx="14" ry="14" fill="#f59563" />
+  <!-- determined face -->
+  <ellipse cx="70" cy="80" rx="7" ry="8" fill="#fff" />
+  <ellipse cx="130" cy="80" rx="7" ry="8" fill="#fff" />
+  <path d="M75 130 Q100 120 125 130" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" />
+  <text x="100" y="165" font-size="34" font-family="sans-serif" fill="#fff" text-anchor="middle">16</text>
+</svg>

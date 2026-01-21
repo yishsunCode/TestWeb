@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <rect x="0" y="0" width="200" height="200" rx="8" ry="8" fill="#edcf72" />
+  <!-- sleepy face -->
+  <path d="M60 85 Q70 100 80 85" stroke="#6b4f3a" stroke-width="4" fill="none" />
+  <path d="M120 85 Q130 100 140 85" stroke="#6b4f3a" stroke-width="4" fill="none" />
+  <text x="100" y="165" font-size="30" font-family="sans-serif" fill="#6b4f3a" text-anchor="middle">128</text>
+</svg>

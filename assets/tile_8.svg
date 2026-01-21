@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <rect x="0" y="0" width="200" height="200" rx="16" ry="16" fill="#f4b77d" />
+  <!-- happy face with blush -->
+  <circle cx="70" cy="80" r="9" fill="#5a2f1b" />
+  <circle cx="130" cy="80" r="9" fill="#5a2f1b" />
+  <path d="M70 120 Q100 140 130 120" stroke="#5a2f1b" stroke-width="6" fill="none" stroke-linecap="round" />
+  <circle cx="60" cy="95" r="4" fill="#ffb0a0" />
+  <circle cx="140" cy="95" r="4" fill="#ffb0a0" />
+  <!-- number -->
+  <text x="100" y="165" font-size="36" font-family="sans-serif" fill="#fff" text-anchor="middle">8</text>
+</svg>

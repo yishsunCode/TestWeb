@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <rect x="0" y="0" width="200" height="200" rx="6" ry="6" fill="#edcc61" />
+  <!-- proud face -->
+  <circle cx="70" cy="80" r="8" fill="#6b4f3a" />
+  <circle cx="130" cy="80" r="8" fill="#6b4f3a" />
+  <path d="M60 120 Q100 140 140 120" stroke="#6b4f3a" stroke-width="5" fill="none" />
+  <text x="100" y="165" font-size="28" font-family="sans-serif" fill="#6b4f3a" text-anchor="middle">256</text>
+</svg>
