@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
   <rect width="200" height="200" fill="#edc22e" rx="18" ry="18" />
-  <line x1="55" y1="70" x2="85" y2="100" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
-  <line x1="85" y1="70" x2="55" y2="100" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
-  <line x1="115" y1="70" x2="145" y2="100" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
-  <line x1="145" y1="70" x2="115" y2="100" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
-  <circle cx="100" cy="132" r="11" fill="#fff" />
+  <circle cx="70" cy="80" r="10" fill="#fff" />
+  <circle cx="130" cy="80" r="10" fill="#fff" />
+  <path d="M60 125 Q100 150 140 125" stroke="#fff" stroke-width="6" fill="none" />
 </svg>

@@ -80,19 +80,14 @@ body {
   background-size: cover;
   background-position: center;
   z-index: 3;
+  color: inherit; /* allow collision SVGs using currentColor to match tile face color */
   border-radius: 18px;
 }
 .tile.collision.src { opacity: 0.95 }
 .tile.collision.tgt { opacity: 0.95 }
 
 .tile.collision.tgt.pop {
-  animation: collisionPop 180ms ease;
-}
-
-@keyframes collisionPop {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.08); }
-  100% { transform: scale(1); }
+  animation: popScale 160ms ease;
 }
 
 /* color variants */
