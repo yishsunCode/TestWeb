@@ -7,6 +7,6 @@
   <path d="M70 120 Q100 140 130 120" stroke="#5a2f1b" stroke-width="6" fill="none" stroke-linecap="round" />
   <circle cx="60" cy="95" r="4" fill="#ffb0a0" />
   <circle cx="140" cy="95" r="4" fill="#ffb0a0" />
-  <!-- number -->
-  <text x="100" y="165" font-size="36" font-family="sans-serif" fill="#fff" text-anchor="middle">8</text>
+  <!-- watermark number (large, semi-transparent) -->
+  <text x="100" y="125" font-size="86" font-family="sans-serif" fill="#fff" text-anchor="middle" opacity="0.12">8</text>
 </svg>
