@@ -85,6 +85,16 @@ body {
 .tile.collision.src { opacity: 0.95 }
 .tile.collision.tgt { opacity: 0.95 }
 
+.tile.collision.tgt.pop {
+  animation: collisionPop 180ms ease;
+}
+
+@keyframes collisionPop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
 /* color variants */
 .tile.v2 { background: #eee4da; color: #776e65; }
 .tile.v4 { background: #ede0c8; color: #776e65; }

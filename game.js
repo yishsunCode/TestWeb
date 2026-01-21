@@ -7,6 +7,49 @@ const boardDiv = document.getElementById("board");
 
 let nextTileId = 1;
 
+// cache for raw collision SVG text per value
+const _rawCollisionSvgCache = new Map();
+// cache for colored data-uris per value+color
+const _coloredCollisionCache = new Map();
+
+function rgbToHex(rgb){
+  if (!rgb) return rgb;
+  // already hex
+  if (rgb[0] === '#') return rgb;
+  const m = rgb.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+  if (!m) return rgb;
+  const r = parseInt(m[1]); const g = parseInt(m[2]); const b = parseInt(m[3]);
+  return '#' + [r,g,b].map(v => v.toString(16).padStart(2,'0')).join('');
+}
+
+async function fetchRawCollisionSvg(value){
+  if (_rawCollisionSvgCache.has(value)) return _rawCollisionSvgCache.get(value);
+  try{
+    const res = await fetch(`assets/collision_${value}.svg`);
+    if (!res.ok) throw new Error('not found');
+    const txt = await res.text();
+    _rawCollisionSvgCache.set(value, txt);
+    return txt;
+  }catch(e){
+    return null;
+  }
+}
+
+async function getColoredCollisionDataUrl(value, colorHex){
+  const key = `${value}|${colorHex}`;
+  if (_coloredCollisionCache.has(key)) return _coloredCollisionCache.get(key);
+  const raw = await fetchRawCollisionSvg(value);
+  if (!raw) return `assets/collision_${value}.svg`; // fallback to original url
+
+  // replace common black color occurrences (stroke/fill) with desired color
+  const replaced = raw.replace(/(stroke|fill)=(['"])(?:#000000|#000|black)\2/gi, `$1=$2${colorHex}$2`);
+
+  // produce a data URI (encodeURIComponent to keep it safe)
+  const dataUrl = 'data:image/svg+xml;utf8,' + encodeURIComponent(replaced);
+  _coloredCollisionCache.set(key, dataUrl);
+  return dataUrl;
+}
+
 function makeTile(value){
   return { id: nextTileId++, value };
 }
@@ -186,27 +229,59 @@ function animateMoves(moves){
       // For merged moves, make the target (被撞擊) tile change face during the movement.
       // Find the target element by id (if available) so we can swap its background to the collision SVG and bring it to front.
       const targetEl = m.targetId ? idToEl.get(Number(m.targetId)) : null;
-      const collisionSvg = `assets/collision_${m.value}.svg`;
       const finalTileSvg = `assets/tile_${m.value * 2}.svg`;
 
+      // determine collision face color: prefer target element's text color (if present),
+      // otherwise fall back to the configured .tile.v<value> color in CSS
+      let faceColor = null;
       if (targetEl) {
-        // bring target above moving tiles
-        targetEl.style.zIndex = 6;
-        // temporarily set collision face (source value)
-        targetEl.dataset._origBg = targetEl.style.backgroundImage || '';
-        targetEl.style.backgroundImage = `url(${collisionSvg})`;
-        targetEl.classList.add('asset');
-      } else {
-        // fallback: create a collision overlay at target position
-        const overlayTgt = document.createElement('div');
-        overlayTgt.className = 'tile collision tgt';
-        overlayTgt.style.backgroundImage = `url(${collisionSvg})`;
-        setPosition(overlayTgt, m.to[0], m.to[1]);
-        overlayTgt.style.zIndex = 6;
-        boardDiv.appendChild(overlayTgt);
-        // ensure we remove this overlay later
-        targetEl = overlayTgt; // reuse variable for cleanup
+        try{
+          const cs = window.getComputedStyle(targetEl);
+          faceColor = cs && (cs.color || cs.fill || cs.stroke) || null;
+        }catch(e){ faceColor = null }
       }
+      if (!faceColor){
+        // look up a representative element for the value class
+        const probe = document.createElement('div');
+        probe.className = 'tile v' + m.value;
+        document.body.appendChild(probe);
+        const cs = window.getComputedStyle(probe);
+        faceColor = cs && (cs.color || cs.fill || cs.stroke) || '#000';
+        probe.remove();
+      }
+      const faceHex = rgbToHex(faceColor) || '#000';
+
+      // get a data URI for the colored collision svg (async). We'll set a fallback url first.
+      const fallbackCollision = `assets/collision_${m.value}.svg`;
+      // start with fallback so user sees something immediately
+      if (targetEl && targetEl.dataset && targetEl.dataset.id) {
+        targetEl.style.zIndex = 6;
+        targetEl.dataset._origBg = targetEl.style.backgroundImage || '';
+        targetEl.style.backgroundImage = `url(${fallbackCollision})`;
+        targetEl.classList.add('asset');
+      }
+
+      // async: fetch and colorize SVG then set as background (if still present)
+      getColoredCollisionDataUrl(m.value, faceHex).then(dataUrl => {
+        // if targetEl is still in DOM, apply the colored data url and add pop
+        if (targetEl && targetEl.isConnected) {
+          targetEl.style.backgroundImage = `url(${dataUrl})`;
+          targetEl.classList.add('pop');
+          setTimeout(()=> targetEl.classList.remove('pop'), 220);
+        } else {
+          // create an overlay using colored data url
+          const overlayTgt = document.createElement('div');
+          overlayTgt.className = 'tile collision tgt pop';
+          overlayTgt.style.backgroundImage = `url(${dataUrl})`;
+          setPosition(overlayTgt, m.to[0], m.to[1]);
+          overlayTgt.style.zIndex = 6;
+          boardDiv.appendChild(overlayTgt);
+          targetEl = overlayTgt;
+          setTimeout(()=> overlayTgt.classList.remove('pop'), 220);
+        }
+      }).catch(()=>{
+        // ignore - keep fallback
+      });
 
       // ensure moving tile is underneath
       el.style.zIndex = 2;
