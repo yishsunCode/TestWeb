@@ -7,6 +7,59 @@ const boardDiv = document.getElementById("board");
 
 let nextTileId = 1;
 
+// preloaded asset map (url -> Image)
+const PRELOADED = new Map();
+
+function getAllAssetUrls(){
+  const urls = new Set();
+  for (let v=2; v<=2048; v*=2){
+    urls.add(`assets/tile_${v}.svg`);
+    urls.add(`assets/collision_${v}.svg`);
+  }
+  return Array.from(urls);
+}
+
+function showLoading(){
+  let o = document.getElementById('loading-overlay');
+  if (!o){
+    o = document.createElement('div');
+    o.id = 'loading-overlay';
+    o.textContent = '載入圖檔中...';
+    Object.assign(o.style, {
+      position:'fixed', left:0, top:0, right:0, bottom:0,
+      display:'flex', alignItems:'center', justifyContent:'center',
+      background:'rgba(0,0,0,0.35)', color:'#fff', fontSize:'20px', zIndex:9999
+    });
+    document.body.appendChild(o);
+  }
+}
+
+function hideLoading(){
+  const o = document.getElementById('loading-overlay');
+  if (o) o.remove();
+}
+
+function loadAssets(timeoutMs = 5000){
+  const urls = getAllAssetUrls();
+  showLoading();
+  return new Promise(resolve => {
+    let remaining = urls.length;
+    if (remaining === 0) { hideLoading(); return resolve(); }
+    const done = () => { if (--remaining <= 0) { hideLoading(); resolve(); } };
+    urls.forEach(u=>{
+      try {
+        const img = new Image();
+        img.onload = () => { PRELOADED.set(u, img); done(); };
+        img.onerror = () => { console.warn('asset failed to load', u); PRELOADED.set(u, null); done(); };
+        // start load
+        img.src = u;
+      } catch(e){ console.warn('preload error', e); PRELOADED.set(u, null); done(); }
+    });
+    // safety timeout: resolve even if some images hang
+    setTimeout(()=>{ hideLoading(); resolve(); }, timeoutMs);
+  });
+}
+
 function makeTile(value){
   return { id: nextTileId++, value };
 }
@@ -296,4 +349,7 @@ function attachControls(){
   });
 }
 
-init();
+// load assets first, then start the game
+loadAssets().then(()=>{
+  try { init(); } catch(e){ console.error('init failed', e); }
+});
