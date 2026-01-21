@@ -40,7 +40,7 @@ body {
   width: 72px;
   height: 72px;
   background: #cdc1b4;
-  border-radius: 6px;
+  border-radius: 18px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -54,7 +54,7 @@ body {
   position: absolute;
   width: 72px;
   height: 72px;
-  border-radius: 6px;
+  border-radius: 18px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -70,8 +70,20 @@ body {
 .tile.asset {
   background-size: cover;
   background-position: center;
-  color: transparent;
+  /* keep text visible so numbers still show when using SVG assets */
+  color: inherit;
 }
+
+.tile.collision {
+  width: 72px;
+  height: 72px;
+  background-size: cover;
+  background-position: center;
+  z-index: 3;
+  border-radius: 18px;
+}
+.tile.collision.src { opacity: 0.95 }
+.tile.collision.tgt { opacity: 0.95 }
 
 /* color variants */
 .tile.v2 { background: #eee4da; color: #776e65; }

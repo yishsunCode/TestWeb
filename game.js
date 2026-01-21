@@ -70,20 +70,13 @@ function renderStaticTiles(initial=false){
 function createTileElement(value, id){
   const el = document.createElement('div');
   el.className = 'tile v' + value;
-  // try to set asset image (PNG) if user replaces/places it in assets/
-  const imgPath = `assets/tile_${value}.png`;
-  // We can't synchronously check file existence in browser; set background and rely on browser to 404 silently.
-  // To keep fallback readable, set text but also set asset class only after image loads.
-  el.textContent = value;
-  const img = new Image();
-  img.onload = () => {
-    el.style.backgroundImage = `url(${imgPath})`;
-    el.classList.add('asset');
-  };
-  img.onerror = () => {
-    // leave as styled tile with text
-  };
-  img.src = imgPath;
+  // Use SVG assets directly if present in assets/tile_<value>.svg
+  const svgPath = `assets/tile_${value}.svg`;
+  // set as background image (browser will 404 silently if missing)
+  el.style.backgroundImage = `url(${svgPath})`;
+  el.classList.add('asset');
+  // SVG will contain the visible number/graphics. Keep an aria-label for accessibility.
+  el.setAttribute('aria-label', String(value));
   el.dataset.id = id;
   return el;
 }
@@ -123,7 +116,9 @@ function computeMoves(dir){
           b[nr][nc].value *= 2;
           b[cr][cc] = null;
           merged[nr][nc] = true;
-          moves.push({ id: cell.id, from: [r,c], to: [nr,nc], value: cell.value, merged:true });
+          // record merged move and include target id if exists
+          const targetId = b[nr][nc].id || null;
+          moves.push({ id: cell.id, from: [r,c], to: [nr,nc], value: cell.value, merged:true, targetId });
           break;
         }
         break;
@@ -188,9 +183,51 @@ function animateMoves(moves){
     });
     // if merged, after arrival pop and then remove (final tile will be re-rendered)
     if (m.merged){
+      // For merged moves, make the target (被撞擊) tile change face during the movement.
+      // Find the target element by id (if available) so we can swap its background to the collision SVG and bring it to front.
+      const targetEl = m.targetId ? idToEl.get(Number(m.targetId)) : null;
+      const collisionSvg = `assets/collision_${m.value}.svg`;
+      const finalTileSvg = `assets/tile_${m.value * 2}.svg`;
+
+      if (targetEl) {
+        // bring target above moving tiles
+        targetEl.style.zIndex = 6;
+        // temporarily set collision face (source value)
+        targetEl.dataset._origBg = targetEl.style.backgroundImage || '';
+        targetEl.style.backgroundImage = `url(${collisionSvg})`;
+        targetEl.classList.add('asset');
+      } else {
+        // fallback: create a collision overlay at target position
+        const overlayTgt = document.createElement('div');
+        overlayTgt.className = 'tile collision tgt';
+        overlayTgt.style.backgroundImage = `url(${collisionSvg})`;
+        setPosition(overlayTgt, m.to[0], m.to[1]);
+        overlayTgt.style.zIndex = 6;
+        boardDiv.appendChild(overlayTgt);
+        // ensure we remove this overlay later
+        targetEl = overlayTgt; // reuse variable for cleanup
+      }
+
+      // ensure moving tile is underneath
+      el.style.zIndex = 2;
+
       setTimeout(()=>{
-        el.classList.add('pop');
-        setTimeout(()=> el.remove(), 220);
+        // remove moving tile
+        setTimeout(()=> el.remove(), 40);
+
+        // after movement, restore/replace target to final tile
+        setTimeout(()=>{
+          if (targetEl) {
+            // if it was a real tile element, set its background to the final tile svg and reset z-index
+            if (targetEl.dataset && targetEl.dataset.id) {
+              targetEl.style.backgroundImage = `url(${finalTileSvg})`;
+              targetEl.style.zIndex = 2;
+            } else {
+              // overlay fallback: remove it and let renderStaticTiles create the final tile
+              targetEl.remove();
+            }
+          }
+        }, 80);
       }, 160);
     } else {
       // remove after move; final board will be rendered
