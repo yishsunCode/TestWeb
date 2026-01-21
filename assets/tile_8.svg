@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
   <rect x="0" y="0" width="200" height="200" rx="16" ry="16" fill="#f4b77d" />
+  <!-- watermark number (large, semi-transparent) placed first so the face is drawn on top -->
+  <text x="100" y="150" font-size="160" font-family="sans-serif" fill="#fff" text-anchor="middle" opacity="0.2">8</text>
   <!-- happy face with blush -->
   <circle cx="70" cy="80" r="9" fill="#5a2f1b" />
   <circle cx="130" cy="80" r="9" fill="#5a2f1b" />
   <path d="M70 120 Q100 140 130 120" stroke="#5a2f1b" stroke-width="6" fill="none" stroke-linecap="round" />
   <circle cx="60" cy="95" r="4" fill="#ffb0a0" />
   <circle cx="140" cy="95" r="4" fill="#ffb0a0" />
-  <!-- watermark number (large, semi-transparent) -->
-  <text x="100" y="125" font-size="86" font-family="sans-serif" fill="#fff" text-anchor="middle" opacity="0.12">8</text>
 </svg>

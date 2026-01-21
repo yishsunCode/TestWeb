@@ -6,5 +6,5 @@
   <circle cx="130" cy="80" r="9" fill="#6b4f3a" />
   <circle cx="100" cy="120" r="10" fill="#6b4f3a" />
   <!-- watermark number (large, semi-transparent) -->
-  <text x="100" y="125" font-size="86" font-family="sans-serif" fill="#6b4f3a" text-anchor="middle" opacity="0.12">4</text>
+  <text x="100" y="150" font-size="160" font-family="sans-serif" fill="#6b4f3a" text-anchor="middle" opacity="0.2">4</text>
 </svg>
